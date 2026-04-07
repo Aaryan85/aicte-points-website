@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block title %}Leaderboard - AICTE Points{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="page-header d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1><i data-lucide="trophy"></i> AICTE Points Leaderboard</h1>
+            <p class="subtitle">Top performing students across the institution.</p>
+        </div>
+    </div>
+
+    <div class="card leaderboard-card">
+        <div class="card-body p-0">
+            {% if rankings %}
+            <div class="table-responsive">
+                <table class="table table-hover leaderboard-table">
+                    <thead>
+                        <tr>
+                            <th class="text-center" width="80">Rank</th>
+                            <th>Student</th>
+                            <th>Department</th>
+                            <th class="text-center">Events Attended</th>
+                            <th class="text-right">Total Points</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for student in rankings %}
+                        <tr class="{% if current_user_id == student.id %}highlight-row{% endif %}">
+                            <td class="text-center font-bold">
+                                {% if loop.index == 1 %}
+                                    <span class="rank-badge rank-1">🥇 1</span>
+                                {% elif loop.index == 2 %}
+                                    <span class="rank-badge rank-2">🥈 2</span>
+                                {% elif loop.index == 3 %}
+                                    <span class="rank-badge rank-3">🥉 3</span>
+                                {% else %}
+                                    {{ loop.index }}
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="student-name">{{ student.full_name }}</div>
+                                <div class="student-roll text-muted small">{{ student.roll_number }}</div>
+                            </td>
+                            <td>{{ student.department }}</td>
+                            <td class="text-center">{{ student.events_attended }}</td>
+                            <td class="text-right font-bold text-primary">{{ student.total_points }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <div class="empty-icon"><i data-lucide="trophy"></i></div>
+                <h3>Leaderboard is empty</h3>
+                <p>Points have not been awarded yet.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

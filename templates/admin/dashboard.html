@@ -1,0 +1,204 @@
+{% extends 'base.html' %}
+{% block title %}Admin Dashboard - AICTE Points{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <div class="container">
+        <h1>Administrator Dashboard</h1>
+        <p class="subtitle">System Overview and Approvals</p>
+    </div>
+</div>
+
+<div class="container">
+    <!-- System Stats -->
+    <div class="stats-grid mb-4">
+        <div class="stat-box">
+            <div class="stat-value">{{ stats.total_students }}</div>
+            <div class="stat-label">Students</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-value">{{ stats.total_clubs }}</div>
+            <div class="stat-label">Clubs</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-value text-success">{{ stats.approved_events }}</div>
+            <div class="stat-label">Approved Events</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-value text-warning">{{ stats.pending_events }}</div>
+            <div class="stat-label">Pending Approval</div>
+        </div>
+    </div>
+
+    <!-- Pending Approvals -->
+    <div class="card mb-4 border-warning" style="border-width: 2px;">
+        <div class="card-header bg-warning bg-opacity-10 d-flex justify-content-between align-items-center">
+            <h2 class="mb-0 text-warning d-flex align-items-center">
+                <span class="icon mr-2"><i data-lucide="alert-triangle"></i>️</span> Pending Approvals
+            </h2>
+            <span class="badge badge-warning">{{ pending_events|length }}</span>
+        </div>
+        <div class="card-body p-0">
+            {% if pending_events %}
+            <div class="table-responsive">
+                <table class="table mb-0">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Event Details</th>
+                            <th>Club</th>
+                            <th class="text-right">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for event in pending_events %}
+                        <tr>
+                            <td style="width: 15%">
+                                <div>{{ event.event_date.strftime('%b %d, %Y') if event.event_date else 'N/A' }}</div>
+                                <small class="text-muted">{{ event.event_time }}</small>
+                            </td>
+                            <td style="width: 45%">
+                                <div class="font-bold d-flex align-items-center">
+                                    {{ event.title }}
+                                    <span class="badge badge-{{ event.category }} mx-2">{{ event.category|capitalize }}</span>
+                                    <span class="badge badge-primary">{{ event.points }} pts</span>
+                                </div>
+                                <p class="text-muted small mt-1 mb-1 line-clamp-2">{{ event.description }}</p>
+                                <div class="small">
+                                    <strong>Venue:</strong> {{ event.venue }} | <strong>Cap:</strong> {{ event.max_participants }}
+                                </div>
+                            </td>
+                            <td style="width: 20%">{{ event.club_name }}</td>
+                            <td class="text-right" style="width: 20%">
+                                <div class="d-flex flex-column align-items-end" style="gap: 5px;">
+                                    <form action="{{ url_for('admin.approve_event', event_id=event.id) }}" method="POST">
+                                        <button type="submit" class="btn btn-success btn-sm confirm-action btn-block"
+                                                data-confirm="Approve '{{ event.title }}'? It will instantly be visible to students.">Approve</button>
+                                    </form>
+                                    <button type="button" class="btn btn-outline-danger btn-sm btn-block" 
+                                            onclick="toggleElement('rejectForm-{{ event.id }}')">Reject</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr id="rejectForm-{{ event.id }}" style="display: none;" class="bg-light">
+                            <td colspan="4" class="p-3">
+                                <form action="{{ url_for('admin.reject_event', event_id=event.id) }}" method="POST" class="d-flex align-items-center">
+                                    <input type="text" name="reason" class="form-control form-control-sm mr-2" placeholder="Reason for rejection (Required)" required>
+                                    <button type="submit" class="btn btn-danger btn-sm whitespace-nowrap">Confirm Rejection</button>
+                                    <button type="button" class="btn btn-link text-muted ml-2" onclick="toggleElement('rejectForm-{{ event.id }}')">Cancel</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="p-4 text-center text-muted">
+                <span class="icon" style="font-size: 2rem;"><i data-lucide="check-circle"></i></span>
+                <p class="mt-2 mb-0">All caught up! No pending approvals.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Top Students -->
+        <div class="col-md-6 mb-4">
+            <div class="card height-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h2 class="mb-0">Top Point Earners</h2>
+                    <a href="{{ url_for('admin.leaderboard') }}" class="btn btn-sm btn-outline">Full List</a>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Student</th>
+                                    <th>Dept</th>
+                                    <th class="text-right">Points</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for student in leaderboard %}
+                                <tr>
+                                    <td>
+                                        <div class="font-bold">{{ student.full_name }}</div>
+                                        <small class="text-muted">{{ student.roll_number }}</small>
+                                    </td>
+                                    <td>{{ student.department[:15] }}{% if student.department|length > 15 %}...{% endif %}</td>
+                                    <td class="text-right font-bold text-primary">{{ student.total_points }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Activity (All Events) -->
+        <div class="col-md-6 mb-4">
+            <div class="card height-100">
+                <div class="card-header">
+                    <h2 class="mb-0">Recent Events</h2>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Event</th>
+                                    <th>Status</th>
+                                    <th class="text-right">Reg/Cap</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for event in all_events[:10] %}
+                                <tr>
+                                    <td>
+                                        <div class="font-bold line-clamp-1" title="{{ event.title }}">{{ event.title }}</div>
+                                        <small class="text-muted">{{ event.club_name }}</small>
+                                    </td>
+                                    <td>
+                                        {% if event.status == 'approved' %}
+                                            <span class="badge badge-success badge-sm">Approved</span>
+                                        {% elif event.status == 'rejected' %}
+                                            <span class="badge badge-danger badge-sm">Rejected</span>
+                                        {% else %}
+                                            <span class="badge badge-warning badge-sm">Pending</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-right">
+                                        {{ event.registered_count }}/{{ event.max_participants }}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% if all_events|length > 10 %}
+                    <div class="p-3 text-center border-top bg-light">
+                        <span class="text-muted small">Showing 10 most recent events</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function toggleElement(id) {
+        var x = document.getElementById(id);
+        if (x.style.display === "none") {
+            x.style.display = "table-row";
+        } else {
+            x.style.display = "none";
+        }
+    }
+</script>
+{% endblock %}

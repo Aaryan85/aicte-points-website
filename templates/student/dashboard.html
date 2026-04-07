@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+{% block title %}Student Dashboard - AICTE Points{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <div class="container">
+        <h1>Welcome, {{ user.full_name }}</h1>
+        <p class="subtitle">{{ user.department }} • Roll No: {{ user.roll_number }}</p>
+    </div>
+</div>
+
+<div class="container">
+    <!-- Quick Actions -->
+    <div class="dashboard-actions">
+        <a href="{{ url_for('student.events') }}" class="btn btn-primary">Browse Events</a>
+        <a href="{{ url_for('student.download_report') }}" class="btn btn-outline" target="_blank">
+            <span class="icon">📄</span> Download Report
+        </a>
+    </div>
+
+    <div class="dashboard-grid">
+        <!-- Main Stats Card -->
+        <div class="card stat-card main-stat">
+            <div class="card-header">
+                <h2>AICTE Points Progress</h2>
+            </div>
+            <div class="card-body">
+                <div class="points-display">
+                    <span class="points-large">{{ total_points }}</span>
+                    <span class="points-total">/ {{ max_points }}</span>
+                </div>
+                
+                <div class="progress-container">
+                    <div class="progress-bar" style="width: {{ progress }}%"></div>
+                </div>
+                <p class="progress-text">
+                    {% if total_points >= max_points %}
+                        <span class="text-success">Congratulations! You've reached the target.</span>
+                    {% else %}
+                        You need {{ max_points - total_points }} more points to reach the target.
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+
+        <!-- Category Breakdown -->
+        <div class="card category-card">
+            <div class="card-header">
+                <h2>Category Breakdown</h2>
+            </div>
+            <div class="card-body">
+                <div class="category-list">
+                    <div class="category-item">
+                        <div class="category-info">
+                            <span class="category-dot bg-technical"></span>
+                            <span class="category-name">Technical</span>
+                        </div>
+                        <span class="category-points">{{ category_points.get('technical', 0) }}</span>
+                    </div>
+                    <div class="progress-mini">
+                        <div class="progress-bar bg-technical" style="width: {{ (category_points.get('technical', 0) / 40 * 100) if category_points.get('technical', 0) else 0 }}%"></div>
+                    </div>
+                    
+                    <div class="category-item mt-3">
+                        <div class="category-info">
+                            <span class="category-dot bg-cultural"></span>
+                            <span class="category-name">Cultural</span>
+                        </div>
+                        <span class="category-points">{{ category_points.get('cultural', 0) }}</span>
+                    </div>
+                    <div class="progress-mini">
+                        <div class="progress-bar bg-cultural" style="width: {{ (category_points.get('cultural', 0) / 40 * 100) if category_points.get('cultural', 0) else 0 }}%"></div>
+                    </div>
+                    
+                    <div class="category-item mt-3">
+                        <div class="category-info">
+                            <span class="category-dot bg-social"></span>
+                            <span class="category-name">Social/Community</span>
+                        </div>
+                        <span class="category-points">{{ category_points.get('social', 0) }}</span>
+                    </div>
+                    <div class="progress-mini">
+                        <div class="progress-bar bg-social" style="width: {{ (category_points.get('social', 0) / 40 * 100) if category_points.get('social', 0) else 0 }}%"></div>
+                    </div>
+                    
+                    <div class="category-item mt-3">
+                        <div class="category-info">
+                            <span class="category-dot bg-sports"></span>
+                            <span class="category-name">Sports</span>
+                        </div>
+                        <span class="category-points">{{ category_points.get('sports', 0) }}</span>
+                    </div>
+                    <div class="progress-mini">
+                        <div class="progress-bar bg-sports" style="width: {{ (category_points.get('sports', 0) / 40 * 100) if category_points.get('sports', 0) else 0 }}%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Event History -->
+    <div class="card history-card mt-4">
+        <div class="card-header">
+            <h2>Event History</h2>
+        </div>
+        <div class="card-body p-0">
+            {% if event_history %}
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Event Title</th>
+                            <th>Category</th>
+                            <th>Status</th>
+                            <th>Points</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for event in event_history %}
+                        <tr>
+                            <td>{{ event.event_date.strftime('%b %d, %Y') if event.event_date else 'N/A' }}</td>
+                            <td class="font-medium">{{ event.title }}
+                                <br><small class="text-muted">{{ event.club_name }}</small>
+                            </td>
+                            <td><span class="badge badge-{{ event.category }}">{{ event.category|capitalize }}</span></td>
+                            <td>
+                                {% if event.attended %}
+                                    <span class="badge badge-success">Attended</span>
+                                {% else %}
+                                    <span class="badge badge-warning">Registered</span>
+                                {% endif %}
+                            </td>
+                            <td class="font-bold {% if event.points_awarded > 0 %}text-success{% endif %}">
+                                {% if event.points_awarded > 0 %}+{{ event.points_awarded }}{% else %}-{% endif %}
+                            </td>
+                            <td>
+                                {% if event.attended %}
+                                <a href="{{ url_for('student.download_certificate', event_id=event.id) }}" class="btn btn-outline btn-sm" title="Download Certificate">
+                                    <span class="icon"><i data-lucide="graduation-cap"></i></span> Cert
+                                </a>
+                                {% else %}
+                                <button type="button" class="btn btn-secondary btn-sm" disabled>Pending</button>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <div class="empty-icon"><i data-lucide="calendar"></i></div>
+                <h3>No events yet</h3>
+                <p>Register for events to start earning points!</p>
+                <a href="{{ url_for('student.events') }}" class="btn btn-primary mt-3">Browse Events</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

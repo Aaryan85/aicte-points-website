@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% block title %}User Management - AICTE Points{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1>User Management</h1>
+            <p class="subtitle">Registered accounts overview</p>
+        </div>
+        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline">Back to Dashboard</a>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters-container mb-4">
+        <div class="filter-tabs">
+            <a href="{{ url_for('admin.view_users', role='all') }}" class="filter-tab {% if current_filter == 'all' %}active{% endif %}">All Users</a>
+            <a href="{{ url_for('admin.view_users', role='student') }}" class="filter-tab {% if current_filter == 'student' %}active{% endif %}">Students</a>
+            <a href="{{ url_for('admin.view_users', role='club') }}" class="filter-tab {% if current_filter == 'club' %}active{% endif %}">Clubs</a>
+            <a href="{{ url_for('admin.view_users', role='admin') }}" class="filter-tab {% if current_filter == 'admin' %}active{% endif %}">Admins</a>
+        </div>
+    </div>
+
+    <div class="card p-0">
+        <div class="card-body p-0">
+            {% if users %}
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Role</th>
+                            <th>Name / Details</th>
+                            <th>Contact</th>
+                            <th>Joined</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for sysuser in users %}
+                        <tr>
+                            <td class="text-muted">#{{ sysuser.id }}</td>
+                            <td>
+                                {% if sysuser.role == 'student' %}
+                                    <span class="badge badge-primary">Student</span>
+                                {% elif sysuser.role == 'club' %}
+                                    <span class="badge badge-secondary">Club</span>
+                                {% elif sysuser.role == 'admin' %}
+                                    <span class="badge badge-warning">Admin</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="font-bold">{{ sysuser.full_name }}</div>
+                                {% if sysuser.role == 'student' %}
+                                    <small class="text-muted">{{ sysuser.department }} • {{ sysuser.roll_number }}</small>
+                                {% elif sysuser.role == 'club' %}
+                                    <small class="text-muted">{{ sysuser.club_name }}</small>
+                                    <div class="small line-clamp-1" title="{{ sysuser.club_description }}">{{ sysuser.club_description }}</div>
+                                {% endif %}
+                                <div class="small text-muted mt-1">@{{ sysuser.username }}</div>
+                            </td>
+                            <td>
+                                <a href="mailto:{{ sysuser.email }}">{{ sysuser.email }}</a>
+                            </td>
+                            <td>
+                                {{ sysuser.created_at.strftime('%b %d, %Y') if sysuser.created_at else 'Unknown' }}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <div class="empty-icon"><i data-lucide="users"></i></div>
+                <h3>No users found</h3>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

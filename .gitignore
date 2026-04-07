@@ -1,0 +1,10 @@
+venv/
+__pycache__/
+*.pyc
+.env
+static/qrcodes/*
+static/certificates/*
+static/reports/*
+!static/qrcodes/.gitkeep
+!static/certificates/.gitkeep
+!static/reports/.gitkeep

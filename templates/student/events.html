@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% block title %}Browse Events - AICTE Points{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="page-header d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1>Upcoming Events</h1>
+            <p class="subtitle">Discover and register for activities to earn AICTE points.</p>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters-container mb-4">
+        <div class="filter-tabs">
+            <a href="{{ url_for('student.events', category='all') }}" class="filter-tab {% if current_category == 'all' %}active{% endif %}">All</a>
+            <a href="{{ url_for('student.events', category='technical') }}" class="filter-tab {% if current_category == 'technical' %}active{% endif %}">Technical</a>
+            <a href="{{ url_for('student.events', category='cultural') }}" class="filter-tab {% if current_category == 'cultural' %}active{% endif %}">Cultural</a>
+            <a href="{{ url_for('student.events', category='social') }}" class="filter-tab {% if current_category == 'social' %}active{% endif %}">Social</a>
+            <a href="{{ url_for('student.events', category='sports') }}" class="filter-tab {% if current_category == 'sports' %}active{% endif %}">Sports</a>
+        </div>
+    </div>
+
+    <!-- Events Grid -->
+    {% if events %}
+    <div class="cards-grid">
+        {% for event in events %}
+        <div class="event-card card">
+            <div class="card-header event-card-header bg-{{ event.category }} bg-opacity-10 border-bottom-{{ event.category }}">
+                <div class="d-flex justify-content-between align-items-start">
+                    <span class="badge badge-{{ event.category }}">{{ event.category|capitalize }}</span>
+                    <div class="points-badge">
+                        <span class="points-val">{{ event.points }}</span> pts
+                    </div>
+                </div>
+                <h3 class="event-title mt-2">{{ event.title }}</h3>
+                <p class="event-club text-muted mb-0">by {{ event.club_name }}</p>
+            </div>
+            
+            <div class="card-body">
+                <div class="event-meta mb-3">
+                    <div class="meta-item">
+                        <span class="icon"><i data-lucide="calendar"></i></span> 
+                        {{ event.event_date.strftime('%b %d, %Y') if event.event_date else '' }}
+                    </div>
+                    <div class="meta-item">
+                        <span class="icon">⏰</span> 
+                        {{ event.event_time }}
+                    </div>
+                    <div class="meta-item">
+                        <span class="icon"><i data-lucide="map-pin"></i></span> 
+                        {{ event.venue }}
+                    </div>
+                    <div class="meta-item">
+                        <span class="icon"><i data-lucide="users"></i></span> 
+                        {{ event.registered_count }}/{{ event.max_participants }} registered
+                    </div>
+                </div>
+                
+                <p class="event-desc text-muted line-clamp-3">{{ event.description }}</p>
+            </div>
+            
+            <div class="card-footer bg-transparent border-top">
+                {% if event.id in registered_event_ids %}
+                    <button class="btn btn-success btn-block" disabled><i data-lucide="check-circle"></i> Registered</button>
+                    <!-- Small instruction for attendance -->
+                    <small class="d-block text-center mt-2 text-muted">Attend event to earn points</small>
+                {% elif event.registered_count >= event.max_participants %}
+                    <button class="btn btn-secondary btn-block" disabled>Event Full</button>
+                {% else %}
+                    <form action="{{ url_for('student.register_event', event_id=event.id) }}" method="POST">
+                        <button type="submit" class="btn btn-primary btn-block confirm-action" 
+                                data-confirm="Are you sure you want to register for this event?">Register Now</button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state card">
+        <div class="empty-icon text-muted" style="font-size: 3rem;">🔍</div>
+        <h3>No events found</h3>
+        <p>There are currently no events matching your criteria.</p>
+        {% if current_category != 'all' %}
+            <a href="{{ url_for('student.events') }}" class="btn btn-outline mt-3">View All Events</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

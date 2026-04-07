@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+{% block title %}Attendance - {{ event.title }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1>Attendance Management</h1>
+            <p class="subtitle">{{ event.title }} • {{ event.event_date.strftime('%B %d, %Y') if event.event_date else '' }}</p>
+        </div>
+        <a href="{{ url_for('club.dashboard') }}" class="btn btn-outline">Back to Dashboard</a>
+    </div>
+
+    <!-- Overview Stats -->
+    <div class="stats-grid mb-4">
+        <div class="stat-box">
+            <div class="stat-value">{{ event.max_participants }}</div>
+            <div class="stat-label">Capacity</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-value">{{ stats.total_registered }}</div>
+            <div class="stat-label">Registered</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-value text-success">{{ stats.total_attended or 0 }}</div>
+            <div class="stat-label">Attended</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-value text-primary">{{ event.points }} pts</div>
+            <div class="stat-label">Points to Award</div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- QR Code Column -->
+        <div class="col-md-4 mb-4">
+            <div class="card height-100">
+                <div class="card-header text-center">
+                    <h2>QR Attendance</h2>
+                </div>
+                <div class="card-body text-center d-flex flex-column justify-content-center align-items-center">
+                    <p class="text-muted mb-4">Display this QR code for students to scan and mark their attendance automatically.</p>
+                    
+                    {% if qr_path %}
+                    <div class="qr-container bg-white p-3 rounded mb-4" style="display:inline-block; max-width: 100%;">
+                        <img src="{{ url_for('static', filename=qr_path) }}" alt="Event QR Code" style="max-width: 100%; height: auto; display: block;" />
+                    </div>
+                    {% else %}
+                    <div class="alert alert-warning">QR Code not generated properly.</div>
+                    {% endif %}
+                    
+                    <p class="font-bold">Scan to earn {{ event.points }} points!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Manual Attendance Column -->
+        <div class="col-md-8 mb-4">
+            <div class="card height-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h2>Registered Students</h2>
+                </div>
+                <div class="card-body p-0">
+                    {% if students %}
+                    <form method="POST" action="{{ url_for('club.mark_attendance', event_id=event.id) }}" id="bulkAttendanceForm">
+                        <div class="p-3 border-bottom bg-light d-flex justify-content-between align-items-center">
+                            <div>
+                                <input type="checkbox" id="selectAll" class="custom-checkbox ml-2">
+                                <label for="selectAll" class="mb-0 ml-2 cursor-pointer font-medium">Select All Unmarked</label>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-sm">Mark Selected as Attended</button>
+                        </div>
+                        
+                        <div class="table-responsive table-container-scroll" style="max-height: 500px; overflow-y: auto;">
+                            <table class="table mb-0">
+                                <thead style="position: sticky; top: 0; background: var(--bg-card); z-index: 10;">
+                                    <tr>
+                                        <th width="40" class="text-center">Select</th>
+                                        <th>Student Details</th>
+                                        <th>Registered At</th>
+                                        <th class="text-center">Status</th>
+                                        <th class="text-right">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for student in students %}
+                                    <tr class="{% if student.attended %}bg-success-light{% endif %}">
+                                        <td class="text-center align-middle">
+                                            {% if not student.attended %}
+                                            <input type="checkbox" name="student_ids" value="{{ student.id }}" class="attendance-checkbox custom-checkbox">
+                                            {% else %}
+                                            <span class="text-success check-icon"><i data-lucide="check-circle"></i></span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <div class="font-bold">{{ student.full_name }}</div>
+                                            <small class="text-muted">{{ student.department }} • {{ student.roll_number }}</small>
+                                        </td>
+                                        <td class="align-middle">
+                                            <small>{{ student.registered_at.strftime('%b %d, %H:%M') if student.registered_at else 'N/A' }}</small>
+                                        </td>
+                                        <td class="text-center align-middle">
+                                            {% if student.attended %}
+                                            <span class="badge badge-success">Attended</span>
+                                            {% else %}
+                                            <span class="badge badge-warning">Pending</span>
+                                            {% endif %}
+                                        </td>
+                                        <td class="text-right align-middle">
+                                            <button type="submit" formaction="{{ url_for('club.toggle_attendance', event_id=event.id, student_id=student.id) }}" class="btn btn-sm {% if student.attended %}btn-outline-danger{% else %}btn-outline-success{% endif %}">
+                                                {% if student.attended %}Revoke{% else %}Mark{% endif %}
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </form>
+                    {% else %}
+                    <div class="empty-state py-5">
+                        <div class="empty-icon text-muted"><i data-lucide="users"></i></div>
+                        <h3>No registrations yet</h3>
+                        <p>When students register, they will appear here.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const selectAll = document.getElementById('selectAll');
+        if (selectAll) {
+            selectAll.addEventListener('change', function() {
+                const checkboxes = document.querySelectorAll('.attendance-checkbox');
+                checkboxes.forEach(cb => {
+                    cb.checked = selectAll.checked;
+                });
+            });
+        }
+    });
+</script>
+{% endblock %}

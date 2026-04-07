@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+{% block title %}AICTE Activity & Points Management System{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero-bg-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+    </div>
+    <div class="hero-content">
+        <h1 class="hero-title">
+            Track Your <span class="gradient-text">AICTE Points</span><br>
+            With Ease
+        </h1>
+        <p class="hero-subtitle">
+            A complete platform for managing co-curricular activities, event participation, 
+            and AICTE activity points. Clubs create events, students participate, and points 
+            are tracked automatically.
+        </p>
+        <div class="hero-actions">
+            <a href="{{ url_for('auth.signup') }}" class="btn btn-primary btn-lg">
+                Get Started <span class="btn-arrow">→</span>
+            </a>
+            <a href="{{ url_for('auth.login') }}" class="btn btn-outline btn-lg">
+                Login
+            </a>
+        </div>
+        <div class="hero-stats">
+            <div class="hero-stat">
+                <span class="hero-stat-number">100</span>
+                <span class="hero-stat-label">Target Points</span>
+            </div>
+            <div class="hero-stat">
+                <span class="hero-stat-number">4</span>
+                <span class="hero-stat-label">Categories</span>
+            </div>
+            <div class="hero-stat">
+                <span class="hero-stat-number">QR</span>
+                <span class="hero-stat-label">Attendance</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="features" id="features">
+    <div class="container">
+        <h2 class="section-title">Everything You Need</h2>
+        <p class="section-subtitle">Powerful features to manage your co-curricular journey</p>
+        
+        <div class="features-grid">
+            <div class="feature-card" data-animate="fade-up" style="--delay: 0">
+                <div class="feature-icon">📊</div>
+                <h3>Smart Dashboard</h3>
+                <p>Real-time tracking of your AICTE points with category-wise breakdown and progress visualization.</p>
+            </div>
+            <div class="feature-card" data-animate="fade-up" style="--delay: 1">
+                <div class="feature-icon">📱</div>
+                <h3>QR Attendance</h3>
+                <p>Scan QR codes to mark your attendance instantly. No manual processes needed.</p>
+            </div>
+            <div class="feature-card" data-animate="fade-up" style="--delay: 2">
+                <div class="feature-icon"><i data-lucide="trophy"></i></div>
+                <h3>Leaderboard</h3>
+                <p>Compete with peers and see where you stand in the AICTE points rankings.</p>
+            </div>
+            <div class="feature-card" data-animate="fade-up" style="--delay: 3">
+                <div class="feature-icon">📄</div>
+                <h3>PDF Reports</h3>
+                <p>Download comprehensive AICTE reports and participation certificates anytime.</p>
+            </div>
+            <div class="feature-card" data-animate="fade-up" style="--delay: 4">
+                <div class="feature-icon">🎯</div>
+                <h3>Event Management</h3>
+                <p>Clubs can create, manage and track events with full CRUD operations and approval workflow.</p>
+            </div>
+            <div class="feature-card" data-animate="fade-up" style="--delay: 5">
+                <div class="feature-icon"><i data-lucide="shield"></i></div>
+                <h3>Admin Control</h3>
+                <p>Administrators approve events, manage users, and oversee the entire system.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="roles-section">
+    <div class="container">
+        <h2 class="section-title">Designed For Everyone</h2>
+        <div class="roles-grid">
+            <div class="role-card role-student">
+                <div class="role-header">
+                    <span class="role-emoji"><i data-lucide="graduation-cap"></i></span>
+                    <h3>Students</h3>
+                </div>
+                <ul class="role-features">
+                    <li>Browse &amp; register for events</li>
+                    <li>Track AICTE points progress</li>
+                    <li>Download reports &amp; certificates</li>
+                    <li>QR-based attendance marking</li>
+                    <li>View leaderboard rankings</li>
+                </ul>
+                <a href="{{ url_for('auth.signup') }}" class="btn btn-primary btn-block">Join as Student</a>
+            </div>
+            <div class="role-card role-club">
+                <div class="role-header">
+                    <span class="role-emoji">🏛️</span>
+                    <h3>Clubs</h3>
+                </div>
+                <ul class="role-features">
+                    <li>Create &amp; manage events</li>
+                    <li>Generate QR codes for attendance</li>
+                    <li>View registered students</li>
+                    <li>Mark attendance manually or via QR</li>
+                    <li>Track event statistics</li>
+                </ul>
+                <a href="{{ url_for('auth.signup') }}" class="btn btn-secondary btn-block">Register as Club</a>
+            </div>
+            <div class="role-card role-admin">
+                <div class="role-header">
+                    <span class="role-emoji">⚙️</span>
+                    <h3>Admin</h3>
+                </div>
+                <ul class="role-features">
+                    <li>Approve or reject events</li>
+                    <li>View all users &amp; activities</li>
+                    <li>System-wide statistics</li>
+                    <li>Full leaderboard access</li>
+                    <li>Activity oversight</li>
+                </ul>
+                <a href="{{ url_for('auth.login') }}" class="btn btn-outline btn-block">Admin Login</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
