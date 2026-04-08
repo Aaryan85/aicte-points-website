@@ -19,27 +19,6 @@ The **AICTE Activity & Points Management System** is a full-stack web applicatio
 
 ---
 
-## 📸 Screenshots
-
-<table>
-  <tr>
-    <td align="center">
-      <img src="docs/assets/screenshot-dashboard.png" alt="Student Dashboard" width="300"/>
-      <br/><sub><b>Student Dashboard</b></sub>
-    </td>
-    <td align="center">
-      <img src="docs/assets/screenshot-leaderboard.png" alt="Leaderboard" width="300"/>
-      <br/><sub><b>Points Leaderboard</b></sub>
-    </td>
-    <td align="center">
-      <img src="docs/assets/screenshot-qr.png" alt="QR Attendance" width="300"/>
-      <br/><sub><b>QR Attendance Flow</b></sub>
-    </td>
-  </tr>
-</table>
-
----
-
 ## ✨ Core Features
 
 ### 👤 Three-Tier Role Access
@@ -67,7 +46,7 @@ Clubs submit events for review. Admins approve or reject with remarks through a 
 
 ---
 ### 🖼️ System Wireframes
-![AICTE System Flow Wireframe](/Aicte project wireframe.jpeg)
+![AICTE System Flow Wireframe](/Aicte%20project%20wireframe.jpeg)
 
 ---
 ## 🛠️ Technology Stack
