@@ -64,11 +64,12 @@ Participation **certificates** and complete **activity reports** are generated o
 ### ✅ Approval Workflow
 Clubs submit events for review. Admins approve or reject with remarks through a dedicated moderation interface before the event goes live and points are awarded.
 
-### 🌗 Dark / Light Mode
-A native theme toggle ships out of the box — responsive across all screen sizes, styled with Bootstrap 5 and Lucide Icons.
 
 ---
+### 🖼️ System Wireframes
+![AICTE System Flow Wireframe](/Aicte project wireframe.jpeg)
 
+---
 ## 🛠️ Technology Stack
 
 | Layer | Technology |
