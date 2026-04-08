@@ -4,7 +4,7 @@
 {% block content %}
 <div class="dashboard-header">
     <div class="container">
-        <h1>Welcome, {{ user.full_name }}</h1>
+        <h1>👋 Welcome, {{ user.full_name }}</h1>
         <p class="subtitle">{{ user.department }} • Roll No: {{ user.roll_number }}</p>
     </div>
 </div>
@@ -22,7 +22,7 @@
         <!-- Main Stats Card -->
         <div class="card stat-card main-stat">
             <div class="card-header">
-                <h2>AICTE Points Progress</h2>
+                <h2>🎯 AICTE Points Progress</h2>
             </div>
             <div class="card-body">
                 <div class="points-display">
@@ -46,7 +46,7 @@
         <!-- Category Breakdown -->
         <div class="card category-card">
             <div class="card-header">
-                <h2>Category Breakdown</h2>
+                <h2>📊 Category Breakdown</h2>
             </div>
             <div class="card-body">
                 <div class="category-list">
@@ -101,7 +101,7 @@
     <!-- Event History -->
     <div class="card history-card mt-4">
         <div class="card-header">
-            <h2>Event History</h2>
+            <h2>📜 Event History</h2>
         </div>
         <div class="card-body p-0">
             {% if event_history %}

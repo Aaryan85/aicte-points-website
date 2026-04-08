@@ -6,6 +6,7 @@ Contains database credentials, Flask settings, and path configurations.
 """
 
 import os
+import mysql.connector
 from dotenv import load_dotenv
 
 # Load environment variables from .env file (if it exists)
@@ -28,11 +29,11 @@ PERMANENT_SESSION_LIFETIME = 3600  # 1 hour session timeout
 # MySQL Database Configuration
 # ==============================================================================
 MYSQL_CONFIG = {
-    'host': os.environ.get('MYSQL_HOST', 'localhost'),
-    'port': int(os.environ.get('MYSQL_PORT', 3306)),
-    'user': os.environ.get('MYSQL_USER', 'root'),
-    'password': os.environ.get('MYSQL_PASSWORD', ''),
-    'database': os.environ.get('MYSQL_DATABASE', 'aicte_db'),
+    'host': os.environ.get('MYSQL_HOST', os.environ.get('MYSQLHOST', 'localhost')),
+    'port': int(os.environ.get('MYSQL_PORT', os.environ.get('MYSQLPORT', 3306))),
+    'user': os.environ.get('MYSQL_USER', os.environ.get('MYSQLUSER', 'root')),
+    'password': os.environ.get('MYSQL_PASSWORD', os.environ.get('MYSQLPASSWORD', '')),
+    'database': os.environ.get('MYSQL_DATABASE', os.environ.get('MYSQLDATABASE', 'aicte_db')),
     'pool_name': 'aicte_pool',
     'pool_size': 5,
     'autocommit': False
