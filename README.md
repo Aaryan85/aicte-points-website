@@ -46,7 +46,7 @@ Clubs submit events for review. Admins approve or reject with remarks through a 
 
 ---
 ### 🖼️ System Wireframes
-![AICTE System Flow Wireframe](/Aicte%20project%20wireframe.jpeg)
+![AICTE System Flow Wireframe](/Aicte%20project%20wireframe.png)
 
 ---
 ## 🛠️ Technology Stack
